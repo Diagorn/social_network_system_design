@@ -1,0 +1,521 @@
+openapi: 3.0.4
+info:
+  title: VK API
+  description: |-
+    VK pet project API design
+  version: 1.0.0
+tags:
+  - name: message
+    description: Everything about your Messages
+  - name: chat
+    description: Everything about your Chats
+  - name: profile
+    description: Everything about your Profiles
+  - name: friend
+    description: Everything about your Friends
+  - name: post
+    description: Everything about your Posts
+paths:
+  /message:
+    post:
+      tags:
+        - message
+      summary: Send new message.
+      description: Create a new message.
+      operationId: sendMessage
+      requestBody:
+        description: Send new message
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Invalid data supplied
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /message/{messageId}:
+    get:
+      tags:
+        - message
+      summary: Get a message by id
+      parameters:
+        - name: messageId
+          in: path
+          description: 'Message identifier'
+          required: true
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 10
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        '400':
+          description: Invalid ID passed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404':
+          description: Message by ID not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      tags:
+        - message
+      summary: Update message
+      parameters:
+        - name: messageId
+          in: path
+          description: 'Message identifier'
+          required: true
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 10
+      requestBody:
+        description: Send new message
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        '400':
+          description: Invalid ID passed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404':
+          description: Message by ID not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - message
+      summary: Delete message
+      parameters:
+        - name: messageId
+          in: path
+          description: 'Message identifier'
+          required: true
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 10
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        '400':
+          description: Invalid ID passed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404':
+          description: Message by ID not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /chat/{chatId}/messages:
+    get:
+      tags:
+        - chat
+        - message
+      summary: Get last messages in chat
+      parameters:
+        - name: chatId
+          in: path
+          description: 'Chat id'
+          required: true
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 10
+        - name: messagesNumber
+          in: query
+          description: Number of messages to load
+          required: false
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 20
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrayOfMessages"
+        '404':
+          description: Chat by chatId not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /profile/{profileId}:
+    get:
+      tags:
+        - profile
+      summary: Get profile by ID
+      parameters:
+        - name: profileId
+          in: path
+          description: profile id
+          required: true
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 10
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrayOfProfile"
+        '400':
+          description: Invalid ID passed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404':
+          description: Not found user by ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /profile/{profileId}/posts:
+    get:
+      tags:
+        - post
+      summary: View user's posts
+      parameters:
+        - name: profileId
+          in: path
+          description: profile id
+          required: true
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 10
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrayOfPost"
+        '400':
+          description: Invalid ID passed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404':
+          description: Not found user by ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /friend:
+    post:
+      tags:
+        - friend
+      summary: Add friend request
+      requestBody:
+        description: Add friend request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FriendAddRequest'
+        required: true
+      responses:
+        '204':
+          description: Successfull operation
+        '404':
+          description: Sender or receiver not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /friend/{userId}:
+    get:
+      tags:
+        - friend
+      summary: View user's friends
+      parameters:
+        - name: userId
+          in: path
+          description: 'User ID'
+          required: true
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 10
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrayOfProfile"
+        '400':
+          description: Invalid ID passed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404':
+          description: Not found user by ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /post:
+    post:
+      tags:
+        - post
+      summary: Publish post
+      requestBody:
+        description: Publish new post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        '400':
+          description: Invalid data passed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /post/{postId}:
+    patch:
+      tags:
+        - post
+      summary: Edit post
+      parameters:
+        - name: postId
+          in: path
+          description: 'Post ID'
+          required: true
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 10
+      requestBody:
+        description: Edit existing post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: Successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        '400':
+          description: Invalid data passed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '404':
+          description: Not found post by ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Profile:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: 'Михаил'
+        middleName:
+          type: string
+          example: 'Александрович'
+        lastName:
+          type: string
+          example: 'Гасин'
+        dob:
+          type: string
+          format: date
+          description: Date of birth
+          example: "1999-12-20"
+        avatar:
+          type: string
+          format: byte
+          description: Base64-encoded picture
+      required:
+        - firstName
+        - lastName
+    ArrayOfProfile:
+      type: array
+      items:
+        $ref: "#/components/schemas/Profile"
+    Media:
+      type: object
+      properties:
+        content:
+          type: string
+          format: byte
+          description: Base64-encoded picture
+        type:
+          type: string
+          enum: ["video", "photo", "audio"]
+          description: Media type
+        fileName:
+          type: string
+          description: File name
+          example: 'photo.jpg'
+        size:
+          type: integer
+          format: int64
+          description: File size (bytes)
+          example: 73303
+    ArrayOfMedia:
+      type: array
+      items:
+        $ref: "#/components/schemas/Media"
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        text:
+          type: string
+          example: 'Post text'
+        author:
+          $ref: "#/components/schemas/Profile"
+        media:
+          $ref: "#/components/schemas/ArrayOfMedia"
+        createdAt:
+          type: string
+          format: date-time
+          description: 'Time of post publish'
+          example: '2017-07-21T17:32:28Z'
+      required:
+        - text
+        - author
+        - createdAt
+    ArrayOfPost:
+      type: array
+      items:
+        $ref: "#/components/schemas/Post"
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        senderId:
+          type: integer
+          format: int64
+          example: 121
+        chatId:
+          type: integer
+          format: int64
+          example: 7090
+        text:
+          type: string
+          example: 'This is the message text'
+      required:
+        - senderId
+        - chatId
+        - text
+    ArrayOfMessages:
+      type: array
+      items:
+        $ref: "#/components/schemas/Message"
+    FriendAddRequest:
+      type: object
+      properties:
+        fromId:
+          type: integer
+          format: int64
+          description: Initiator
+          example: 110
+        toId:
+          type: integer
+          format: int64
+          description: Potential friend
+          example: 111
+      required:
+        - fromId
+        - toId
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
