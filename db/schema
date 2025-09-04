@@ -1,0 +1,63 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table message {
+  id integer [primary key]
+  sender_id integer
+  chat_id integer
+  text varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table chat {
+  id integer [primary key]
+}
+
+Table profile {
+  id integer [primary key]
+  first_name varchar
+  middle_name varchar
+  last_name varchar
+  dob date
+  avatar_guid varcbar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table friend {
+  user1_id integer
+  user2_id integer
+  friendship_date timestamp
+}
+
+Table post {
+  id integer [primary key]
+  author_id integer
+  text varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table media {
+  id integer [primary key]
+  post_id integer
+  message_id integer
+  guid varchar
+  file_name varchar
+  size integer
+}
+
+Ref: profile.id < message.sender_id
+
+Ref: chat.id < message.chat_id
+
+Ref: post.id < media.post_id
+
+Ref: profile.id < friend.user1_id
+
+Ref: profile.id < friend.user2_id
+
+Ref: profile.id < post.author_id
+
+Ref: message.id < media.message_id
